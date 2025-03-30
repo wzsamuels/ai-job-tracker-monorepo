@@ -1,0 +1,38 @@
+# Node
+node_modules/
+dist/
+.next/
+.turbo/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*.local
+
+# IDEs / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# Output
+coverage/
+out/
+build/
+*.log
+
+# Optional: Turbo remote cache (if you ever use it)
+turbo.json
+turbo.lock
+
+# Optional: VSCode settings and workspace history
+.history/
