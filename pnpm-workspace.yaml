@@ -1,5 +1,10 @@
 onlyBuiltDependencies:
   - '@prisma/client'
   - '@prisma/engines'
+  - bcrypt
   - esbuild
   - prisma
+  - sharp
+packages:
+  - apps/*
+  - packages/*
