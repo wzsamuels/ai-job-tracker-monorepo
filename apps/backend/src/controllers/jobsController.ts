@@ -1,48 +1,57 @@
-import { Request, Response } from "express";
-import * as jobsService from "../services/jobsService";
+import { RequestHandler } from 'express';
+import * as jobService from '../services/jobsService';
+import { AuthRequest } from '../middlewares/auth';
 
-export const getJobs = async (req: Request, res: Response) => {
+export const getJobs: RequestHandler = async (req, res) => {
   try {
-    const jobs = await jobsService.getAllJobs();
+    const userId = (req as unknown as AuthRequest).userId!;
+    const jobs = await jobService.getAllJobs(userId);
     res.json(jobs);
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 };
 
-export const getJob = async (req: Request, res: Response) => {
+export const getJob: RequestHandler = async (req, res) => {
   try {
-    const job = await jobsService.getJobById(req.params.id);
-    if(!job) return res.status(404).json({ error: 'Job not found' });      
+    const userId = (req as unknown as AuthRequest).userId!;
+    const job = await jobService.getJobById(userId, req.params.id);
+    if (!job) {
+      res.status(404).json({ error: 'Job not found' });
+      return;
+    }
     res.json(job);
-  } catch(error) {
+  } catch (err) {
     res.status(500).json({ error: 'Failed to fetch job' });
   }
-}
+};
 
-export const createJob = async (req: Request, res: Response) => {
+export const createJob: RequestHandler = async (req, res) => {
   try {
-    const job = await jobsService.createJob(req.body);
+    const userId = (req as unknown as AuthRequest).userId!;
+    const job = await jobService.createJob(userId, req.body);
     res.status(201).json(job);
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({ error: 'Failed to create job' });
   }
 };
 
-export const updateJob = async (req: Request, res: Response) => {
+export const updateJob: RequestHandler = async (req, res) => {
   try {
-    const job = await jobsService.updateJob(req.params.id, req.body);
+    const userId = (req as unknown as AuthRequest).userId!;
+    const job = await jobService.updateJob(userId, req.params.id, req.body);
     res.json(job);
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({ error: 'Failed to update job' });
   }
 };
 
-export const deleteJob = async (req: Request, res: Response) => {
+export const deleteJob: RequestHandler = async (req, res) => {
   try {
-    await jobsService.deleteJob(req.params.id);
+    const userId = (req as unknown as AuthRequest).userId!;
+    await jobService.deleteJob(userId, req.params.id);
     res.status(204).end();
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({ error: 'Failed to delete job' });
   }
 };
