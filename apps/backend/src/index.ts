@@ -24,7 +24,7 @@ app.use('/api', csrfRoutes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK' });
+  res.status(200).json({ status: 'ok', timestamp: Date.now() });
 });
 
 app.listen(PORT, () => {
