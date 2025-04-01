@@ -1,13 +1,9 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { apiFetch, apiFetchZod } from '@/lib/apiClient';
-import { UserSchema } from '@/validators/user';
-
-type User = {
-  id: string;
-  email: string;
-};
+import { useApi } from '@/hooks/useApi';
+import { useApiMutation } from '@/hooks/useApiMutation';
+import { UserSchema, type User } from '@/validators/user';
 
 type AuthContextType = {
   user: User | null;
@@ -20,21 +16,25 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  // 🧠 Automatically fetches and validates the current user
+  const { data, loading } = useApi<User>({
+    path: '/api/auth/me',
+    schema: UserSchema,
+  });
 
   useEffect(() => {
-    apiFetchZod('/api/auth/me', UserSchema)
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
-  
+    if (data) setUser(data);
+  }, [data]);
+
+  // 🔐 Logout using mutation hook
+  const { mutate: logoutMutation } = useApiMutation({
+    path: '/api/auth/logout',
+    method: 'POST',
+  });
 
   const logout = async () => {
-    await apiFetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
+    await logoutMutation();
     setUser(null);
   };
 

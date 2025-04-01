@@ -19,7 +19,7 @@ export default function HomePage() {
   }, [user, loading, router]);
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 flex flex-col">
+    <main className="min-h-screen flex flex-col">
 
       <motion.section
         className="flex flex-1 flex-col items-center justify-center text-center px-4 py-16"
@@ -37,7 +37,7 @@ export default function HomePage() {
         </motion.h2>
 
         <motion.p
-          className="text-lg max-w-xl mb-8 text-gray-600"
+          className="text-lg max-w-xl mb-8 "
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useApiMutation } from '@/hooks/useApiMutation';
+import { UserSchema, type User } from '@/validators/user';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -10,20 +12,21 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // ✅ Signup mutation hook with output validation
+  const { mutate: signup, loading } = useApiMutation<User, { email: string; password: string }>({
+    path: '/api/auth/signup',
+    method: 'POST',
+    schema: UserSchema, // optional, validates returned user
+  });
+
   const handleSignup = async () => {
     setError('');
-    const res = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email, password }),
-    });
+    const result = await signup({ email, password });
 
-    if (res.ok) {
-      router.push('/dashboard');
+    if (result) {
+      router.push('/dashboard'); // ✅ redirect on success
     } else {
-      const data = await res.json();
-      setError(data.error || 'Signup failed');
+      setError('Signup failed. Please try again.');
     }
   };
 
@@ -49,15 +52,19 @@ export default function SignupPage() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
       {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
 
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="w-full bg-blue-600 text-white p-2 rounded font-semibold"
+        disabled={loading}
+        className={`w-full p-2 rounded font-semibold transition ${
+          loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white'
+        }`}
         onClick={handleSignup}
       >
-        Sign Up
+        {loading ? 'Creating account...' : 'Sign Up'}
       </motion.button>
     </motion.div>
   );

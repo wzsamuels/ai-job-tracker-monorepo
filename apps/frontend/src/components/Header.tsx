@@ -8,7 +8,7 @@ export default function Header() {
 
   return (
     <header className="p-4 border-b flex justify-between items-center">
-      <h1 className="font-bold text-lg">AI Job Tracker</h1>
+      <h1 className="font-bold text-lg"><Link href='/'>AI Job Tracker</Link></h1>
       {!loading && (
         user ? (
           <div className="flex items-center gap-4">
