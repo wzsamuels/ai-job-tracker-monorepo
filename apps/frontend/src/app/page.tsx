@@ -1,9 +1,23 @@
 'use client';
 
+// This page is the landing page for unauthenticated users
+
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
+  const {user, loading} = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, loading, router]);
+
   return (
     <main className="min-h-screen bg-white text-gray-900 flex flex-col">
 

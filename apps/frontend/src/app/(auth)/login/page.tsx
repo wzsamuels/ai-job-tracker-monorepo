@@ -1,76 +1,84 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { useAuth } from '@/context/AuthContext';
+import { AuthSchema, AuthInput } from '@/validators/auth';
+import { apiFetch } from '@/lib/apiClient';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const [form, setForm] = useState<AuthInput>({ email: '', password: '' });
+  const [errors, setErrors] = useState<Partial<Record<keyof AuthInput, string>>>({});
+  const [generalError, setGeneralError] = useState('');
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({});
+    setGeneralError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const result = AuthSchema.safeParse(form);
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        email: fieldErrors.email?.[0],
+        password: fieldErrors.password?.[0],
+      });
+      return;
     }
-    if (!loading && user) {
+
+    try {
+      await apiFetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(form),
+      });
+
       router.push('/dashboard');
-    }
-  }, [user, loading, router]);
-
-
-  const handleLogin = async () => {
-    setError('');
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (res.ok) {
-      router.push('/dashboard');
-    } else {
-      const data = await res.json();
-      setError(data.error || 'Login failed');
+    } catch (err) {
+      setGeneralError('Invalid credentials or server error');
     }
   };
 
   return (
-    <motion.div
-      className="max-w-md mx-auto mt-20 p-6 border rounded-lg shadow"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      <h2 className="text-2xl font-bold mb-4 text-center">Welcome Back</h2>
+    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded shadow">
+      <h1 className="text-2xl font-bold mb-4">Log In</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block mb-1 font-medium">Email</label>
+          <input
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded"
+          />
+          {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
+        </div>
 
-      <input
-        className="w-full p-2 border rounded mb-3"
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="w-full p-2 border rounded mb-3"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
+        <div>
+          <label className="block mb-1 font-medium">Password</label>
+          <input
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded"
+          />
+          {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
+        </div>
 
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="w-full bg-blue-600 text-white p-2 rounded font-semibold"
-        onClick={handleLogin}
-      >
-        Log In
-      </motion.button>
-    </motion.div>
+        {generalError && <p className="text-sm text-red-600">{generalError}</p>}
+
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Log In
+        </button>
+      </form>
+    </div>
   );
 }

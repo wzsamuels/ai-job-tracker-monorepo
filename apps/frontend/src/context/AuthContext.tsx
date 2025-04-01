@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { apiFetch } from '@/lib/apiClient';
+import { apiFetch, apiFetchZod } from '@/lib/apiClient';
+import { UserSchema } from '@/validators/user';
 
 type User = {
   id: string;
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<User | null>('/api/auth/me')
+    apiFetchZod('/api/auth/me', UserSchema)
       .then(setUser)
       .catch(() => setUser(null))
       .finally(() => setLoading(false));

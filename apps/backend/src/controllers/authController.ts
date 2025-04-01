@@ -7,6 +7,7 @@ import prisma from '../utils/prisma';
 
 // Define the secret key for JWT, using an environment variable or a default value
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_key';
+const isProd = process.env.NODE_ENV === 'production';
 
 // Signup handler: Registers a new user
 export const signup: RequestHandler = async (req, res) => {
@@ -30,8 +31,8 @@ export const signup: RequestHandler = async (req, res) => {
     res.status(201)
       .cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        sameSite: 'lax',
+        secure: isProd, // Use secure cookies in production
+        sameSite: isProd ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(res.statusCode || 200)
@@ -67,8 +68,8 @@ export const login: RequestHandler = async (req, res) => {
     res
       .cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        sameSite: 'lax',
+        secure: isProd, // Use secure cookies in production
+        sameSite: isProd ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(res.statusCode || 200)
