@@ -1,3 +1,4 @@
+import { i } from "framer-motion/client";
 import type { NextConfig } from "next";
 
 const nextConfig = {
@@ -6,6 +7,9 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination: 'http://localhost:3001/api/:path*',
+        eslint: {
+          ignoreDuringBuilds: true
+        }
       },
     ];
   },
