@@ -36,7 +36,7 @@ export const signup: RequestHandler = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(res.statusCode || 200)
-      .json({ message: 'Logged in' });
+      res.json({ id: user.id, email: user.email });
   } catch (err) {
     // Handle errors during signup
     res.status(500).json({ error: 'Signup failed' });
@@ -73,7 +73,7 @@ export const login: RequestHandler = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(res.statusCode || 200)
-      .json({ message: 'Logged in' });
+      .json({ id: user.id, email: user.email });
   } catch (err) {
     // Handle errors during login
     res.status(500).json({ error: 'Login failed' });

@@ -1,17 +1,21 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from '@/context/AuthContext';
 import Header from '@/components/Header';
+import { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <AuthProvider>
-      <Header />
-      {children}
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Header />
+        {children}
+      </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

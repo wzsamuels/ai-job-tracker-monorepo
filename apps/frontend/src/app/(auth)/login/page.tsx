@@ -1,23 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AuthSchema, type AuthInput } from '@/validators/auth';
-import { useApiMutation } from '@/hooks/useApiMutation';
 import { UserSchema, type User } from '@/validators/user';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { resolve } from 'path';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [form, setForm] = useState<AuthInput>({ email: '', password: '' });
   const [errors, setErrors] = useState<Partial<Record<keyof AuthInput, string>>>({});
   const [generalError, setGeneralError] = useState('');
 
-  // ✅ Login mutation using shared API hook
-  const { mutate: login, loading } = useApiMutation<User, AuthInput>({
-    path: '/api/auth/login',
-    method: 'POST',
-    schema: UserSchema,
+    const { user, loading } = useAuth();
+  
+    // 🚀 Redirect if user is not logged in once loading is complete
+    useEffect(() => {
+      if (!loading && user) {
+        router.push('/dashboard');
+      }
+    }, [user, loading, router]);
+  
+
+  // 🔐 Login mutation
+  const loginMutation = useMutation({
+    mutationFn: async (input: AuthInput): Promise<User> => {
+      console.log('🔐 Sending login request...');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+      });
+    
+      console.log('📡 Login response status:', res.status);
+    
+      const json = await res.json().catch(() => ({}));
+      console.log('📦 Login response JSON:', json);
+    
+      if (!res.ok) {
+        throw new Error(json?.error || `Login failed with status ${res.status}`);
+      }
+    
+      return UserSchema.parse(json);
+    },
+    onSuccess: async () => {
+      console.log('✅ Login succeeded, waiting 100ms for cookie...');
+
+      await new Promise((resolve) => setTimeout(resolve, 100)); // In case there's a cookie delay
+
+      router.push('/dashboard');
+
+      setTimeout(() => {
+        console.log('🔄 Invalidating currentUser after redirect...');
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      }, 200);
+    },
+    onError: () => {
+      console.error('❌ Login failed');
+      setGeneralError('Invalid credentials or server error');
+    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,12 +85,7 @@ export default function LoginPage() {
       return;
     }
 
-    const user = await login(form);
-    if (user) {
-      router.push('/dashboard');
-    } else {
-      setGeneralError('Invalid credentials or server error');
-    }
+    loginMutation.mutate(form);
   };
 
   return (
@@ -86,12 +127,12 @@ export default function LoginPage() {
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          disabled={loading}
+          disabled={loginMutation.isPending}
           className={`w-full p-2 rounded font-semibold transition ${
-            loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white'
+            loginMutation.isPending ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white'
           }`}
         >
-          {loading ? 'Logging in...' : 'Log In'}
+          {loginMutation.isPending ? 'Logging in...' : 'Log In'}
         </motion.button>
       </form>
     </motion.div>

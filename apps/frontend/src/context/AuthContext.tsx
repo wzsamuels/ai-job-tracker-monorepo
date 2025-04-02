@@ -1,45 +1,43 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useApi } from '@/hooks/useApi';
-import { useApiMutation } from '@/hooks/useApiMutation';
-import { UserSchema, type User } from '@/validators/user';
+import { createContext, useContext } from 'react';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type AuthContextType = {
-  user: User | null;
+  user: ReturnType<typeof useCurrentUser>['data'];
   loading: boolean;
-  setUser: (user: User | null) => void;
   logout: () => void;
+  refetchUser: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const { data: user, isLoading, refetch } = useCurrentUser();
+  const queryClient = useQueryClient();
 
-  // 🧠 Automatically fetches and validates the current user
-  const { data, loading } = useApi<User>({
-    path: '/api/auth/me',
-    schema: UserSchema,
-  });
-
-  useEffect(() => {
-    if (data) setUser(data);
-  }, [data]);
-
-  // 🔐 Logout using mutation hook
-  const { mutate: logoutMutation } = useApiMutation({
-    path: '/api/auth/logout',
-    method: 'POST',
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    },
   });
 
   const logout = async () => {
-    await logoutMutation();
-    setUser(null);
+    await logoutMutation.mutateAsync(); // this does the fetch
+    queryClient.setQueryData(['currentUser'], null); // ⛔ user is now null immediately
   };
+  
+  const refetchUser = () => refetch();
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser, logout }}>
+    <AuthContext.Provider value={{ user, loading: isLoading, logout, refetchUser  }}>
       {children}
     </AuthContext.Provider>
   );
