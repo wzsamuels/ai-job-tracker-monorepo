@@ -7,18 +7,9 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/jsonwebtoken": "^9.0.9",
     "nodemon": "^3.1.9",
     "tsx": "^4.19.3",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@10.7.0",
-  "dependencies": {
-    "@prisma/client": "^6.5.0",
-    "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2",
-    "prisma": "^6.5.0",
-    "zod": "^3.24.2"
-  }
+  "packageManager": "pnpm@10.7.0"
 }
