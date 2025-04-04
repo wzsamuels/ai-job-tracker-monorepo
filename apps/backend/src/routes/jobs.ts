@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as jobController from '../controllers/jobsController';
 import { validate } from '../middlewares/validate';
-import { JobSchema } from '../validators/jobValidator';
+import { JobSchema } from '@ai-job-tracker/validators';
 import { requireAuth } from '../middlewares/auth';
 import { verifyCsrfToken } from '../middlewares/csrf';
 

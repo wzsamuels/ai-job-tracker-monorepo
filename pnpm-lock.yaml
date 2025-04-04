@@ -42,6 +42,9 @@ importers:
 
   apps/backend:
     dependencies:
+      '@ai-job-tracker/validators':
+        specifier: workspace:*
+        version: link:../../packages/validators
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -137,6 +140,12 @@ importers:
       typescript:
         specifier: ^5
         version: 5.8.2
+
+  packages/validators:
+    dependencies:
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
 
 packages:
 

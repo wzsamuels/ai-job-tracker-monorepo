@@ -1,4 +1,4 @@
-name: Build & Deploy Backend with PM2
+name: Build & Deploy Backend (pnpm + PM2)
 
 on:
   push:
@@ -14,24 +14,24 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+    - name: Enable corepack and setup pnpm
+      run: |
+        corepack enable
+        corepack prepare pnpm@8.15.1 --activate
 
-    - name: Cache NPM Dependencies
+    - name: Cache pnpm store
       uses: actions/cache@v3
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('apps/backend/package-lock.json') }}
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
-          ${{ runner.os }}-npm-
+          ${{ runner.os }}-pnpm-
 
-    - name: Install & Build Backend
-      run: |
-        cd apps/backend
-        npm ci
-        npm run build
+    - name: Install Dependencies
+      run: pnpm install
+
+    - name: Build Backend Only
+      run: pnpm --filter ./apps/backend... build
 
     - name: Upload dist/ via SCP
       uses: appleboy/scp-action@v0.1.3
