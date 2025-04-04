@@ -1,13 +1,3 @@
-// packages/validators/package.json
-{
-  "name": "@ai-job-tracker/validators",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "types": "index.ts",
-  "exports": {
-    ".": {
-      "import": "./index.ts",
-      "require": "./index.ts"
-    }
-  }
-}
+export * from './auth';
+export * from './user';
+export * from './job';
