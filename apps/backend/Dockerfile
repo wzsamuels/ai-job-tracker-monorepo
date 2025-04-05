@@ -7,7 +7,6 @@ WORKDIR /app
 # Copy only what's needed to install deps
 COPY apps/backend/package.json ./
 COPY pnpm-lock.yaml ./
-COPY .npmrc ./
 
 RUN corepack enable && corepack prepare pnpm@8.15.1 --activate \
   && pnpm install --prod
