@@ -10,6 +10,6 @@
     "moduleResolution": "node",
     "isolatedModules": true
   },
-  "include": ["*.ts", "prisma/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["*.ts"],
+  "exclude": ["dist", "node_modules", "prisma/generated"]
 }

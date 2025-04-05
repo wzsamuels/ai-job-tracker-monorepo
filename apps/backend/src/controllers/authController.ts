@@ -3,7 +3,7 @@
 import { RequestHandler } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import prisma from '../utils/prisma';
+import {prisma} from '@ai-job-tracker/db'; // Import Prisma client for database operations
 
 // Define the secret key for JWT, using an environment variable or a default value
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_key';

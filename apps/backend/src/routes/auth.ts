@@ -3,7 +3,7 @@ import { Router, type Router as ExpressRouter } from 'express';
 import * as authController from '../controllers/authController';
 import { authLimiter } from '../middlewares/rateLimiter';
 import { AuthRequest, requireAuth } from '../middlewares/auth';
-import prisma from '../utils/prisma';
+import { prisma } from '@ai-job-tracker/db';
 
 const router: ExpressRouter = Router();
 

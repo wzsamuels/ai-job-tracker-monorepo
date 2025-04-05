@@ -4,14 +4,14 @@
   "main": "dist/index.js",
   "pirvate": true,
   "scripts": {
+    "predev": "test -d ../../packages/db/prisma/generated/client || (echo '❌ Prisma client not generated. Run pnpm --filter @ai-job-tracker/db generate' && exit 1)",
     "dev": "tsx watch src/index.ts",
     "build": "tsc -b",
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@ai-job-tracker/validators": "workspace:*",
     "@ai-job-tracker/db": "workspace:*",
-    "@prisma/client": "^6.5.0",
+    "@ai-job-tracker/validators": "workspace:*",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -31,7 +31,6 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.14",
     "@types/swagger-ui-express": "^4.1.8",
-    "prisma": "^6.5.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }

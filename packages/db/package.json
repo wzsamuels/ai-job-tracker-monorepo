@@ -4,10 +4,10 @@
   "description": "Shared Prisma client and types for AI Job Tracker monorepo",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc && prisma generate --schema=prisma/schema.prisma",
-    "generate": "prisma generate --schema=prisma/schema.prisma",
-    "postinstall": "pnpm run build"
+"scripts": {
+  "generate": "prisma generate --schema=prisma/schema.prisma",
+  "build": "tsc && pnpm run generate",
+  "postinstall": "pnpm run build"
   },
   "keywords": [],
   "author": "",
