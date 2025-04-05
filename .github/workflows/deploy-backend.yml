@@ -29,7 +29,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pnpm-
 
-    - name: Install Dependencies
+    - name: Install All Workspace Dependencies
       run: pnpm install
 
     - name: Cache Turbo Cache
@@ -46,8 +46,14 @@ jobs:
     - name: Build Backend with Dependencies
       run: NODE_ENV=production pnpm turbo run build --filter=backend...
 
+    - name: Install Backend Production Dependencies
+      run: pnpm --filter=backend install --prod
+
     - name: Confirm Backend Build Output Exists
-      run: ls -l apps/backend/dist  
+      run: ls -l apps/backend/dist
+
+    - name: Confirm Backend node_modules Exists
+      run: ls -l apps/backend/node_modules
 
     - name: Build Docker Image
       run: docker build -t ai-job-tracker-backend -f apps/backend/Dockerfile .
@@ -73,7 +79,6 @@ jobs:
         script: |
           cd /home/ubuntu/ai-job-tracker
 
-          # ✅ Inject secrets into .env file
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
           echo "PORT=3001" >> .env
