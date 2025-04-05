@@ -1,17 +1,15 @@
 {
-  "extends": "../../tsconfig.base.json", // or your root tsconfig
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true, // needed for project references
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "composite": true,
+    "moduleResolution": "node",
     "declaration": true,
+    "declarationMap": true,              // ✅ Useful for navigating declaration files in consumers
     "emitDeclarationOnly": false,
     "outDir": "dist",
     "rootDir": ".",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "strict": true
+    "strict": true,
   },
-  "include": ["**/*.ts"]
+  "include": ["*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

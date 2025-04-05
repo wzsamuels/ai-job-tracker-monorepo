@@ -1,5 +1,4 @@
-import prisma from '../utils/prisma';
-import { JobApplication } from '@prisma/client';
+import { prisma, JobApplication } from '@ai-job-tracker/db';
 
 export const getAllJobs = async (userId: string): Promise<JobApplication[]> => {
   return prisma.jobApplication.findMany({

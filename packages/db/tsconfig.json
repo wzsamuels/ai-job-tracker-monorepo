@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "moduleResolution": "node",
+    "isolatedModules": true
+  },
+  "include": ["*.ts", "prisma/**/*"],
+  "exclude": ["dist", "node_modules"]
+}

@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2021",
     "module": "CommonJS",
@@ -6,15 +7,13 @@
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "composite": true
   },
-  "include": [
-    "src",
-    "node_modules/@prisma/client/index.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../../packages/db" },
+    { "path": "../../packages/validators" }
   ]
 }

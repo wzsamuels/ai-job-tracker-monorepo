@@ -1,10 +1,12 @@
-name: Build & Deploy Backend (pnpm + PM2)
+name: Build & Deploy Backend (pnpm + Turbo + PM2)
 
 on:
   push:
     branches: [main]
     paths:
       - 'apps/backend/**'
+      - 'packages/db/**'  # Include shared Prisma package changes
+      - 'packages/validators/**'
 
 jobs:
   deploy:
@@ -30,8 +32,8 @@ jobs:
     - name: Install Dependencies
       run: pnpm install
 
-    - name: Build Backend Only
-      run: pnpm --filter ./apps/backend... build
+    - name: Build Backend with Dependencies
+      run: pnpm turbo run build --filter=apps/backend...
 
     - name: Upload dist/ via SCP
       uses: appleboy/scp-action@v0.1.3

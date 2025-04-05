@@ -32,9 +32,5 @@ out/
 build/
 *.log
 
-# Optional: Turbo remote cache (if you ever use it)
-turbo.json
-turbo.lock
-
 # Optional: VSCode settings and workspace history
 .history/
