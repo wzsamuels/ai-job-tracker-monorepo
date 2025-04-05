@@ -1,5 +1,4 @@
 import { PrismaClient } from './prisma/generated/client';
-import type { JobApplication } from './prisma/generated/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -15,5 +14,5 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 
-export { JobApplication };
+// ✅ This re-exports types like JobApplication cleanly for TypeScript
 export * from './prisma/generated/client';

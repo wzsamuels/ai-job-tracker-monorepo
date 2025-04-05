@@ -5,11 +5,14 @@
     "rootDir": ".",
     "composite": true,
     "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
+    "target": "ES2021",
+    "module": "CommonJS",
     "moduleResolution": "node",
-    "isolatedModules": true
+    "esModuleInterop": true
   },
-  "include": ["*.ts"],
-  "exclude": ["dist", "node_modules", "prisma/generated"]
+  "include": [
+    "index.ts",
+    "prisma/generated/**/*"
+  ],
+  "exclude": ["dist", "node_modules"]
 }
