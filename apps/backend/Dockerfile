@@ -1,21 +1,18 @@
+# apps/backend/Dockerfile
+
 FROM node:20-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json + lockfile for faster caching
-COPY apps/backend/package.json ./
+# Copy only what's needed for install
+COPY apps/backend/package.json ./package.json
 COPY pnpm-lock.yaml ./
-COPY .npmrc ./
 
-# Install only production deps
-RUN corepack enable && corepack prepare pnpm@8.15.1 --activate && pnpm install --prod
+RUN corepack enable && corepack prepare pnpm@10.7.0 --activate && pnpm install --prod
 
-# Copy built backend output
+# Copy the built output (this now works because context is root)
 COPY apps/backend/dist ./dist
 
-# Expose the port your app listens on
 EXPOSE 3001
 
-# Run the app
 CMD ["node", "dist/index.js"]
