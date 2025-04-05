@@ -46,9 +46,6 @@ jobs:
     - name: Build Backend with Dependencies
       run: NODE_ENV=production pnpm turbo run build --filter=backend...
 
-    - name: Install Backend Production Dependencies
-      run: pnpm --filter=backend install --prod
-
     - name: Confirm Backend Build Output Exists
       run: ls -l apps/backend/dist
 

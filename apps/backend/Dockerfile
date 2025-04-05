@@ -1,12 +1,19 @@
 # apps/backend/Dockerfile
+
 FROM node:20-alpine
 
 WORKDIR /app
 
-# No longer need to install anything inside Docker
-COPY apps/backend/node_modules ./node_modules
+# Copy only what's needed to install deps
+COPY apps/backend/package.json ./
+COPY pnpm-lock.yaml ./
+COPY .npmrc ./
+
+RUN corepack enable && corepack prepare pnpm@8.15.1 --activate \
+  && pnpm install --prod
+
+# Copy the compiled output
 COPY apps/backend/dist ./dist
 
-# SERVER PORT 3001
 EXPOSE 3001
 CMD ["node", "dist/index.js"]
