@@ -1,23 +1,23 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": ".",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
-    "moduleResolution": "node",
-    "module": "CommonJS",         
-    "target": "ES2021",
-    "isolatedModules": false
+  "name": "@ai-job-tracker/db",
+  "version": "1.0.0",
+  "description": "Shared Prisma client and types for AI Job Tracker monorepo",
+  "main": "index.ts",
+  "types": "index.ts",
+"scripts": {
+  "generate": "prisma generate --schema=prisma/schema.prisma",
+  "postinstall": "pnpm run generate"
   },
-  "include": [
-    "*.ts",
-    "prisma/generated/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.7.0",
+  "dependencies": {
+    "@prisma/client": "^6.5.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.5.0",
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.3"
+  }
 }
