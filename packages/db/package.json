@@ -2,12 +2,11 @@
   "name": "@ai-job-tracker/db",
   "version": "1.0.0",
   "description": "Shared Prisma client and types for AI Job Tracker monorepo",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.ts",
+  "types": "index.ts",
 "scripts": {
   "generate": "prisma generate --schema=prisma/schema.prisma",
-  "build": "tsc && pnpm run generate",
-  "postinstall": "pnpm run build"
+  "postinstall": "pnpm run generate"
   },
   "keywords": [],
   "author": "",
@@ -20,11 +19,5 @@
     "prisma": "^6.5.0",
     "@types/node": "^22.14.0",
     "typescript": "^5.8.3"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    }
   }
 }

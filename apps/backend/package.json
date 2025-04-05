@@ -2,11 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "pirvate": true,
+  "private": true,
   "scripts": {
-    "predev": "test -d ../../packages/db/prisma/generated/client || (echo '❌ Prisma client not generated. Run pnpm --filter @ai-job-tracker/db generate' && exit 1)",
+    "predev": "test -d ../../packages/db/prisma/generated/client || (echo '❌ Prisma client not generated. Run: pnpm --filter @ai-job-tracker/db generate' && exit 1)",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -b",
+    "build": "pnpm --filter @ai-job-tracker/db generate && tsc -b",
     "start": "node dist/index.js"
   },
   "dependencies": {
