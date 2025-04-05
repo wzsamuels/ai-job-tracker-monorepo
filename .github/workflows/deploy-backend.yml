@@ -87,5 +87,6 @@ jobs:
           docker run -d \
             --name backend \
             --env-file .env \
+            --restart unless-stopped \
             -p 3001:3001 \
             ai-job-tracker-backend
