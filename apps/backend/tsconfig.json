@@ -9,7 +9,11 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "composite": true       // ✅ required for project references
+    "composite": true,
+    "paths": {
+      "@ai-job-tracker/db": ["../../packages/db/index.ts"]
+    }
+
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules"],
