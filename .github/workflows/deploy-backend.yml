@@ -54,7 +54,7 @@ jobs:
 
     - name: Build Docker Image
       run: docker build -t ai-job-tracker-backend -f apps/backend/Dockerfile .
-
+    
     - name: Save Docker Image to Tarball
       run: docker save ai-job-tracker-backend > backend.tar
 
