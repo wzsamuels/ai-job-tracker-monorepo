@@ -33,6 +33,7 @@ export const signup: RequestHandler = async (req, res) => {
         httpOnly: true,
         secure: isProd, // Use secure cookies in production
         sameSite: isProd ? 'none' : 'lax',
+        domain: isProd ? '.zach-samuels.com' : undefined,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(res.statusCode || 200)
@@ -64,12 +65,17 @@ export const login: RequestHandler = async (req, res) => {
     // Generate a JWT token for the authenticated user
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
+    // Log before sending cookie
+    console.log('✅ Login successful, setting cookie with token');
+    console.log('📦 Token:', token);
+
     // Set the token as an HTTP-only cookie and respond with success
     res
       .cookie('token', token, {
         httpOnly: true,
         secure: isProd, // Use secure cookies in production
         sameSite: isProd ? 'none' : 'lax',
+        domain: isProd ? '.zach-samuels.com' : undefined,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(res.statusCode || 200)

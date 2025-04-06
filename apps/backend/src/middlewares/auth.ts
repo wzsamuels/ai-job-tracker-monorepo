@@ -10,6 +10,10 @@ export interface AuthRequest extends Request {
 export const requireAuth: RequestHandler = (req, res, next) => {
   const token = req.cookies.token;
 
+  console.log('🔐 Incoming request to protected route');
+  console.log('🍪 Cookies:', req.cookies);
+  console.log('🔗 Origin:', req.headers.origin);
+  
   if (!token) {
     console.warn('❌ No token found in request cookies');
     res.status(401).json({ error: 'Authentication token not found. Please log in.' });

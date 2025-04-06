@@ -8,6 +8,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import csrfRoutes from './routes/csrf';
 import swaggerUi from 'swagger-ui-express';
 import { openApiSpec } from './docs/openapi';
+import { logRequestDebug } from './middlewares/logRequestDebug';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use(express.json());
 applySecurity(app);
 
+app.use(logRequestDebug);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', csrfRoutes);
