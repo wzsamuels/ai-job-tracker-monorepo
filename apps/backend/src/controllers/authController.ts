@@ -89,5 +89,13 @@ export const login: RequestHandler = async (req, res) => {
 // Logout handler: Clears the authentication token
 export const logout: RequestHandler = (req, res) => {
   // Clear the token cookie and respond with success
-  res.clearCookie('token').json({ message: 'Logged out' });
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: isProd, 
+    sameSite: isProd ? 'none' : 'lax',
+    domain: isProd ? '.zach-samuels.com' : undefined,
+    path: '/',
+  });
+
+  res.json({ message: 'Logged out' });
 };

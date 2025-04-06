@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     await logoutMutation.mutateAsync(); // this does the fetch
-    queryClient.setQueryData(['currentUser'], null); // ⛔ user is now null immediately
+    queryClient.setQueryData(['currentUser'], null); 
   };
   
   const refetchUser = () => refetch();
