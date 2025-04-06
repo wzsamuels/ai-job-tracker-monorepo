@@ -6,27 +6,23 @@ import { motion } from 'framer-motion';
 import { AuthSchema, type AuthInput } from '@/validators/auth';
 import { UserSchema, type User } from '@/validators/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { resolve } from 'path';
 import { useAuth } from '@/context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user, loading } = useAuth();
+
   const [form, setForm] = useState<AuthInput>({ email: '', password: '' });
   const [errors, setErrors] = useState<Partial<Record<keyof AuthInput, string>>>({});
-  const [generalError, setGeneralError] = useState('');
 
-    const { user, loading } = useAuth();
-  
-    // 🚀 Redirect if user is not logged in once loading is complete
-    useEffect(() => {
-      if (!loading && user) {
-        router.push('/dashboard');
-      }
-    }, [user, loading, router]);
-  
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, loading, router]);
 
-  // 🔐 Login mutation
   const loginMutation = useMutation({
     mutationFn: async (input: AuthInput): Promise<User> => {
       console.log('🔐 Sending login request...');
@@ -36,43 +32,51 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),
       });
-    
+
       console.log('📡 Login response status:', res.status);
-    
       const json = await res.json().catch(() => ({}));
       console.log('📦 Login response JSON:', json);
-    
+
       if (!res.ok) {
         throw new Error(json?.error || `Login failed with status ${res.status}`);
       }
-    
+
       return UserSchema.parse(json);
     },
-    onSuccess: async () => {
-      console.log('✅ Login succeeded, waiting 100ms for cookie...');
 
-      await new Promise((resolve) => setTimeout(resolve, 100)); // In case there's a cookie delay
+    onSuccess: async () => {
+      toast.success('Login successful!');
+      console.log('✅ Login succeeded, waiting 100ms for cookie...');
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      await queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      const updatedUser = queryClient.getQueryData<User>(['currentUser']);
+
+      if (!updatedUser) {
+        console.warn('⚠️ Could not find user after login — possible cookie issue.');
+        toast.error('Login succeeded, but session could not be verified. Try refreshing.');
+        return;
+      }
 
       router.push('/dashboard');
-
-      setTimeout(() => {
-        console.log('🔄 Invalidating currentUser after redirect...');
-        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      }, 200);
     },
-    onError: () => {
-      console.error('❌ Login failed');
-      setGeneralError('Invalid credentials or server error');
+
+    onError: (err: unknown) => {
+      console.error('❌ Login failed:', err);
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error('Unexpected login error');
+      }
     },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({});
-    setGeneralError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const result = AuthSchema.safeParse(form);
@@ -120,8 +124,6 @@ export default function LoginPage() {
           />
           {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
         </div>
-
-        {generalError && <p className="text-sm text-red-600">{generalError}</p>}
 
         <motion.button
           type="submit"
